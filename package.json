@@ -1,0 +1,45 @@
+{
+  "name": "myecuerp",
+  "private": true,
+  "scripts": {
+    "build": "nuxi build",
+    "dev": "nuxi dev",
+    "dev:proxy": "cd proxy && pnpm dev",
+    "start": "node .output/server/index.mjs",
+    "postinstall": "nuxi prepare",
+    "lint": "eslint .",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "pinia-plugin-persistedstate": "^3.1.0",
+    "zipson": "^0.2.12"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.39.5",
+    "@iconify-json/carbon": "^1.1.17",
+    "@iconify-json/cib": "^1.1.4",
+    "@iconify-json/material-symbols": "^1.1.49",
+    "@iconify-json/ph": "^1.1.5",
+    "@iconify-json/simple-icons": "^1.1.55",
+    "@iconify-json/twemoji": "^1.1.11",
+    "@nuxt/devtools": "^0.5.5",
+    "@nuxt/image-edge": "1.0.0-28100678.6e9298b",
+    "@nuxthq/ui": "^2.5.0",
+    "@nuxtjs/color-mode": "^3.2.0",
+    "@nuxtjs/i18n": "8.0.0-beta.12",
+    "@pinia-plugin-persistedstate/nuxt": "^1.1.1",
+    "@pinia/nuxt": "^0.4.11",
+    "@sidebase/nuxt-auth": "^0.6.0-beta.2",
+    "@unocss/nuxt": "^0.53.0",
+    "@unocss/preset-wind": "^0.53.3",
+    "@vueuse/nuxt": "^10.1.2",
+    "eslint": "^8.42.0",
+    "lru-cache": "^9.1.2",
+    "nuxt": "^3.5.3",
+    "ohash": "^1.1.2",
+    "pinia": "^2.1.3",
+    "typescript": "^5.1.3",
+    "unocss-preset-scrollbar": "^0.2.1",
+    "vue-tsc": "^1.6.5"
+  }
+}
