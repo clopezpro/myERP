@@ -1,57 +1,37 @@
 <script setup lang="ts">
-import { onClickOutside } from '@vueuse/core'
 import { useMenuStore } from '~/stores/menu'
 import type { IMenu } from '@/types'
 
 const sidebarElement = ref<HTMLElement | null>(null)
 
-const Minimize = ref<Boolean>(false)
-const minimizeBar = (value: Boolean) => Minimize.value = value
 const useAuth = useAuthUserStore()
 const useMenu = useMenuStore()
 const $route = useRoute()
-const menus = ref<[IMenu] | []>()
+const menus = toRef<[IMenu] | []>([])
 
-const menuOpen = ref<string | null>(null)
+const menuOpen = toRef(useMenu, 'menuOpen')
 
-onClickOutside(sidebarElement, () => {
+/* onClickOutside(sidebarElement, () => {
   menuOpen.value = null
-})
-async function fetchMenus() {
-  menus.value = useMenu.getMenus()
-}
+}) */
+
 const getMenus = computed(() => {
-  return menus.value?.map((menu: IMenu) => {
-    const subMenus = menu.subMenus?.map((subMenu) => {
-      return {
-        ...subMenu,
-        active: subMenu.path === $route.path,
-      }
-    })
-    const isOpen = menuOpen.value === menu.id
-    return {
-      ...menu,
-      isOpen,
-      subMenus,
-      active: menu.path === $route.path,
-    }
-  })
+  return useMenu.getMenus
 })
-function openMenu(menuId: string) {
-  if (menuOpen.value === menuId)
-    menuOpen.value = null
-  else
-    menuOpen.value = menuId
+function activeMenu(id: string) {
+  useMenu.activeMenu(id)
+  if (!useMenu.showMenu)
+    useMenu.showMenu = true
 }
-onMounted(() => {
-  fetchMenus()
-})
+/* onMounted(() => {
+  useMenu.fetchMenus()
+}) */
 </script>
 
 <template>
-  <div flex>
+  <div v-if="!useMenu.minimized" flex>
     <div
-      v-if="!Minimize"
+
       id="sidebar"
       ref="sidebarElement"
       scrollbar
@@ -73,14 +53,15 @@ onMounted(() => {
       linear
       overflow-y-auto
       flex
+      z-50
     >
       <div>
         <div flex justify-center mt-1 overflow-hidden>
           <UTooltip text="Ocultar">
             <button
               class="justify-center flex-1 h-full border border-green-800 rounded-md"
-              @click="minimizeBar(true)"
-              @touchmove="minimizeBar(true)"
+              @click="useMenu.minimizeBar()"
+              @touchmove="useMenu.minimizeBar()"
             >
               <div class="relative">
                 <div i-carbon-arrow-left h-7 w-7 />
@@ -94,9 +75,8 @@ onMounted(() => {
         >
           <div class="w-full text-center">
             <hr class="border-gray-500">
-            <div class="text-center">
-              Notify <br>
-              EC
+            <div class="text-center text-4xl text-primary ">
+              מ
             </div>
             <hr class="border-gray-500">
             <div class=" pt-1">
@@ -117,7 +97,7 @@ onMounted(() => {
                 <button
                   title="Recargar Modulos "
                   class="justify-center p-1   border border-green-800 rounded-md"
-                  @click="useMenu.fetchMenus()"
+                  @click="useMenu.fetchMenus(true)"
                 >
                   <div class="relative text-yellow-500">
                     <div i-carbon-update-now />
@@ -134,7 +114,7 @@ onMounted(() => {
           items-center
         >
           <NuxtLink v-slot="{ isActive }" to="/" title="Home">
-            <div class="mt-1" :class="{ 'text-green-500 shadow-lg rounded bg-gray-900 p-2': isActive }">
+            <div class="mt-1">
               <div flex flex-col items-center border rounded-md border-gray-700 p-1 px-2>
                 <div
                   w-5
@@ -146,9 +126,16 @@ onMounted(() => {
             </div>
           </NuxtLink>
           <ul>
-            <li v-for="menu in getMenus" :key="menu.id">
+            <li v-for="(menu, index) in getMenus" :key="index">
               <div>
-                <div class="mt-1" :class="{ 'text-green-500 shadow-lg rounded bg-gray-900 p-2': menu.active }">
+                <div
+                  class="mt-1"
+                  :class="{
+                    'text-green-500 shadow-lg rounded bg-gray-900 p-2  ': menu.selected,
+                    'border border-dashed': menu.selected && useMenu.showMenu,
+                  }
+                  "
+                >
                   <div
                     flex
                     flex-col
@@ -158,9 +145,10 @@ onMounted(() => {
                     border-gray-700
                     p-1 px-2
                     text-xs
-                    @click="openMenu(menu?.id || '')"
+                    @click="activeMenu(menu.id || '')"
                   >
-                    <i
+                    <div
+
                       w-5
                       h-5
                       :class="menu.icon"
@@ -174,31 +162,65 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <Transition>
+    <Transition name="slide-fade">
       <div
-        v-show="menuOpen"
-        w-30
+        v-show="useMenu.showMenu"
+        class="w-[200px]"
+        border-muted-200
+        dark:border-muted-700
+        dark:bg-gray-900
+        pointer-events-auto
+        relative
+        z-10
+        h-full
         border-r
-        border-gray-200
-        dark:border-gray-700
-        dashes
+        border-r-gray-800
+        bg-white
       >
         <div
-          class="dropdown"
+          class="flex h-screen flex-col"
         >
-          <ul class="dropdown-content">
-            sss
-            <!-- <div
-
-                        v-for="submenu in menu.subMenus"
-                        :key="submenu._id"
+          <ul>
+            <div class="flex h-16 w-full items-center px-6">
+              <div class="font-heading text-muted-700 text-lg font-light capitalize dark:text-white">
+                {{ menuOpen?.name }}
+              </div>
+            </div>
+            <div slimscroll relative h-full w-full overflow-y-auto px-2>
+              <div border border-green-700 rounded-md py-2 dark:bg-muted-900>
+                <NuxtLink
+                  v-for="submenu in menuOpen?.subMenus" :key="submenu._id"
+                  v-slot="{ isActive }" :to="submenu.path" title="Home"
+                >
+                  <li
+                    class=""
+                    hover="bg-muted-700 "
+                    :class="{
+                      ' bg-muted-800 text-orange-500  ml-2': isActive,
+                    }"
+                    bg-gray-800
+                    rounded-md
+                    text-primary
+                    flex items-center
+                    m-1
+                    divide-x
+                    divide-x-green-700
+                  >
+                    <div
+                      pl-2
+                      min-h-8
+                      class=" flex w-full items-center "
+                    >
+                      <span
+                        class="font-sans text-sm"
                       >
-                        <li
-                          class="py-1 m-1 hover_menu  text-xs border-b border-opacity-20 border-b-green-800"
-                        >
-                          {{ submenu.name.toUpperCase() }}
-                        </li>
-                      </div> -->
+                        {{ submenu.name.toUpperCase() }}
+                      </span>
+                    </div>
+                  </li>
+                </NuxtLink>
+              </div>
+            </div>
           </ul>
         </div>
       </div>
@@ -207,21 +229,22 @@ onMounted(() => {
 
   <div
 
-    v-if="Minimize"
+    v-if="useMenu.minimized"
     dark:bg-muted-900
     border-dashed
     class="group  "
-    w-5
+    lg:w-5
+    lg:px2
+    w-2
     noprint
     flex="~ row col" justify-evenly
     items-center
-    px2
     border=" r base"
     border-primary
     shadow="md"
     shadow-primary
-    @click="minimizeBar(false)"
-    @touchmove="minimizeBar(false)"
+    @click="useMenu.minimizeBar()"
+    @touchmove="useMenu.minimizeBar()"
   >
     <div
       class="transition-transform  group  group-hover:scale-200"
@@ -244,13 +267,21 @@ onMounted(() => {
   box-shadow: 0 0 0 2px green-500;
   padding: 0.5rem;
 }
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 0.5s ease;
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
 }
 
-.v-enter-from,
-.v-leave-to {
+.slide-fade-leave-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-enter-from{
+  transform: translateX(-20px);
   opacity: 0;
+}
+.slide-fade-leave-to{
+  transform: translateX(-200px);
+  border: 0px;
+  opacity: 100;
 }
 </style>

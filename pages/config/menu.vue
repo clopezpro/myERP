@@ -157,12 +157,12 @@ async function createMenu() {
 </script>
 
 <template>
-  <div flex gap-2>
-    <div class="w-1/2 bg-gray-50 dark:bg-gray-800  p-4 rounded-md !border !border-gray-200 dark:!border-gray-700">
+  <div lg:flex gap-2>
+    <div class="lg:w-1/2 bg-gray-50 dark:bg-gray-800  p-4 rounded-md !border !border-gray-200 dark:!border-gray-700">
       <div
         grid
-        grid-cols-2
-        gap-4
+        lg:grid-cols-2
+        lg:gap-4
       >
         <UFormGroup name="nameMenu" label="Nombre">
           <UInput v-model="formMenu.name" icon="i-heroicons-cursor-arrow-rays" color="white" variant="outline" />
@@ -237,7 +237,7 @@ async function createMenu() {
         </div>
       </div>
     </div>
-    <div class="w-1/2 bg-gray-50 dark:bg-gray-800  p-4 rounded-md !border !border-gray-200 dark:!border-gray-700">
+    <div class="lg:w-1/2 bg-gray-50 dark:bg-gray-800  p-4 rounded-md !border !border-gray-200 dark:!border-gray-700">
       <UTable
         :loading="loadingTable"
         class="[&>table>tbody>tr>td,&>table>thead>tr>th]:border [&>table>tbody>tr>td]:border-gray-400"
