@@ -1,6 +1,7 @@
 <script setup>
 import '@unocss/reset/tailwind.css'
 
+const colorMode = useColorMode()
 useHead({
   link: [
     {
@@ -19,12 +20,22 @@ useHead({
 </template>
 
 <style>
+/* body {
+  background-color: #fff;
+  color: rgba(0,0,0,0.8);
+}
+.dark body {
+  background-color: rgb(17 24 39/1);
+  color: #ebf4f1;
+} */
+.sepia-mode body {
+  background-color: #f1e7d0;
+  color: #433422;
+}
+
 html, body , #__nuxt{
   height: 100vh;
   margin: 0;
   padding: 0;
-  background: rgb(17 24 39/1);
-  color: white;
-  color-scheme: dark;
 }
 </style>

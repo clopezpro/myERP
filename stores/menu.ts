@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import type { IMenu } from '@/types'
 import { useAlertErrorModal } from '@/composables/alert'
 
+// @unocss-include
 export const useMenuStore = defineStore('useMenuStore', () => {
   interface IMenuDashboard extends IMenu {
     selected: boolean
@@ -12,6 +13,7 @@ export const useMenuStore = defineStore('useMenuStore', () => {
   const showMenu = ref<boolean>(false)
   const minimized = ref<boolean>(false)
   const loading = ref<boolean>(false)
+  const theme = ref<string>('light')
   const $route = useRouter()
   /* const getMenus = (): [IMenu] | undefined => {
     return menu.value

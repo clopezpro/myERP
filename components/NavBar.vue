@@ -44,7 +44,7 @@ function activeMenu(id: string) {
       class=" scrollbar-track-gray-800"
       dark:bg-gray-800
       dark:border-gray-700
-      bg-green-50
+      bg-white
       border-r-4
       shadow
       min-h-full
@@ -59,12 +59,12 @@ function activeMenu(id: string) {
         <div flex justify-center mt-1 overflow-hidden>
           <UTooltip text="Ocultar">
             <button
-              class="justify-center flex-1 h-full border border-green-800 rounded-md"
+              class="justify-center flex-1 h-full border dark:border-green-800 rounded-md"
               @click="useMenu.minimizeBar()"
               @touchmove="useMenu.minimizeBar()"
             >
               <div class="relative">
-                <div i-carbon-arrow-left h-7 w-7 />
+                <div i-carbon-arrow-left h-7 w-7 text-muted-600 dark:text-muted-200 />
               </div>
             </button>
           </UTooltip>
@@ -74,11 +74,11 @@ function activeMenu(id: string) {
           mt-2
         >
           <div class="w-full text-center">
-            <hr class="border-gray-500">
+            <hr class="dark:border-gray-500">
             <div class="text-center text-4xl text-primary ">
               מ
             </div>
-            <hr class="border-gray-500">
+            <hr class="dark:border-gray-500">
             <div class=" pt-1">
               <div class=" flex justify-center">
                 <UButton
@@ -113,9 +113,9 @@ function activeMenu(id: string) {
           px-1
           items-center
         >
-          <NuxtLink v-slot="{ isActive }" to="/" title="Home">
+          <!-- <NuxtLink v-slot="{ isActive }" to="/" title="Home">
             <div class="mt-1">
-              <div flex flex-col items-center border rounded-md border-gray-700 p-1 px-2>
+              <div flex flex-col items-center border rounded-md border-muted-200 dark:border-muted-700 p-1 px-2>
                 <div
                   w-5
                   h-5
@@ -124,15 +124,15 @@ function activeMenu(id: string) {
                 <div>Inicio</div>
               </div>
             </div>
-          </NuxtLink>
+          </NuxtLink> -->
           <ul>
             <li v-for="(menu, index) in getMenus" :key="index">
               <div>
                 <div
                   class="mt-1"
                   :class="{
-                    'text-green-500 shadow-lg rounded bg-gray-900 p-2  ': menu.selected,
-                    'border border-dashed': menu.selected && useMenu.showMenu,
+                    ' rounded-2xl transition-colors duration-300 bg-primary-100 text-primary-500 dark:bg-primary-500/10 p-2  ': menu.selected,
+                    'dark:bg-muted-200   border-dashed': menu.selected && useMenu.showMenu,
                   }
                   "
                 >
@@ -142,7 +142,8 @@ function activeMenu(id: string) {
                     items-center
                     border
                     rounded-md
-                    border-gray-700
+                    border-muted-200
+                    dark:border-muted-700
                     p-1 px-2
                     text-xs
                     @click="activeMenu(menu.id || '')"
@@ -166,6 +167,7 @@ function activeMenu(id: string) {
       <div
         v-show="useMenu.showMenu"
         class="w-[200px]"
+        border
         border-muted-200
         dark:border-muted-700
         dark:bg-gray-900
@@ -173,8 +175,7 @@ function activeMenu(id: string) {
         relative
         z-10
         h-full
-        border-r
-        border-r-gray-800
+
         bg-white
       >
         <div
@@ -187,18 +188,22 @@ function activeMenu(id: string) {
               </div>
             </div>
             <div slimscroll relative h-full w-full overflow-y-auto px-2>
-              <div border border-green-700 rounded-md py-2 dark:bg-muted-900>
+              <div border border-muted-200 dark:border-green-700 rounded-md py-2 dark:bg-muted-900>
                 <NuxtLink
                   v-for="submenu in menuOpen?.subMenus" :key="submenu._id"
                   v-slot="{ isActive }" :to="submenu.path" title="Home"
                 >
                   <li
                     class=""
-                    hover="bg-muted-700 "
+                    hover="dark:bg-muted-700 "
                     :class="{
-                      ' bg-muted-800 text-orange-500  ml-2': isActive,
+                      ' dark:bg-muted-800 text-primary  ml-2': isActive,
                     }"
-                    bg-gray-800
+                    dark:bg-gray-800
+                    bg-muted-100
+                    text-muted-400
+                    hover:text-primary-500
+                    focus:text-primary-500
                     rounded-md
                     text-primary
                     flex items-center

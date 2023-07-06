@@ -144,15 +144,21 @@ function cleanForm() {
   })
 }
 async function createMenu() {
-  loading.value = true
-  const result = await fetchMAHIRFULL({
-    baseURL: '/config/menu/create',
-    method: 'POST',
-    body: formMenu,
-  })
-  loading.value = false
-  menusData.value.results.push(result)
-  cleanForm()
+  try {
+    loading.value = true
+    const result = await fetchMAHIRFULL({
+      baseURL: '/config/menu/create',
+      method: 'POST',
+      body: formMenu,
+    })
+    loading.value = false
+    menusData.value.results.push(result)
+    cleanForm()
+  }
+  catch (e) {
+    loading.value = false
+    showModalError(e)
+  }
 }
 </script>
 
@@ -177,7 +183,21 @@ async function createMenu() {
           <UFormGroup name="status" label="Estado">
             <UCheckbox v-model="formMenu.active" name="status" label="Activado?" />
           </UFormGroup>
-          <UButton v-if="!formMenu.id" :loading="loading" :disabled="loading" h-7 label="Guardar" variant="solid" icon="i-carbon-save-series" @click="createMenu()" />
+
+          <UButton
+            v-if="!formMenu.id"
+            :loading="loading"
+            :disabled="loading"
+            h-7
+            text-muted-700
+            dark:text-muted-800
+            color="primary"
+            variant="solid"
+            icon="i-carbon-save-series"
+            @click="createMenu()"
+          >
+            <span>Guardar</span>
+          </UButton>
           <div v-else flex gap-1 flex-col>
             <UButton h-7 label="Cancelar" color="red" variant="solid" icon="i-carbon-close" @click="cleanForm" />
             <UButton h-7 label="Actualizar" color="yellow" variant="solid" icon="i-heroicons-arrow-path-rounded-square" @click="updateMenu" />

@@ -6,7 +6,7 @@
 
       class="grid   grid-cols-[max-content,1fr] grid-rows-[1fr,max-content] gap-x-1 "
       h-full w-full font-sans
-
+      bg-muted-100 dark:bg-muted-900
       of-hidden view-transition-app transition duration-0
     >
       <NavBar />

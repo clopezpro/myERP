@@ -81,13 +81,13 @@ onClickOutside(el, () => {
 </script>
 
 <template>
-  <div v-if="dataModal.show" fixed top-0 left-0 right-0 bottom-0 z-10 bg-black:90 flex>
+  <div v-if="dataModal.show" fixed top-0 left-0 right-0 bottom-0 z-100 bg-black:90 flex>
     <button absolute top-1 right-1 z-100 p3 text-3xl n-link bg-black:60 rounded-full title="Close" @click="hideModal">
       <div i-carbon-close />
     </button>
     <div ref="el" w-full>
       <div mx-auto class="w-1/2 h-screen flex items-center justify-content-center">
-        <div class="bg-muted-900 w-full p-4 rounded shadow-xl">
+        <div class="bg-muted-100 dark:bg-muted-900 w-full p-4 rounded shadow-xl">
           <div>
             {{ dataModal.title }}
           </div>
