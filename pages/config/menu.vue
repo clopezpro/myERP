@@ -1,11 +1,13 @@
 <script setup lang="ts">
-const showModal = useAlertModal()
+import modalOrdening from './components/menu.ordering.vue'
+
 const showModalError = useAlertErrorModal()
 const { getRoutes } = useRouter()
 const routes = computed(() => getRoutes().map(route => route.path).sort((a, b) => a.length > b.length ? 1 : -1))
 const menusData = ref({
   results: [] as Array<typeof formMenu>,
 })
+const orderTd = ref < [typeof formMenu] | [] > ([])
 const columns = [{
   key: 'id',
   label: 'ID',
@@ -39,6 +41,9 @@ const formMenu = reactive({
   active: true,
   subMenus: [] as Array<typeof formSubMenu>,
 })
+const modals = reactive({
+  ordeningMenu: false,
+})
 const loading = ref<boolean> (false)
 const loadingTable = ref<boolean> (false)
 
@@ -55,7 +60,7 @@ onMounted(() => {
   fetchMenus()
 })
 
-function setEdit(item: typeof formSubMenu) {
+function setEditSubMenu(item: typeof formSubMenu) {
   item._id = item._id ? item._id : Math.random().toString()
   Object.assign(formSubMenu, item)
 }
@@ -73,7 +78,7 @@ function cleanSubMenu() {
     active: true,
   })
 }
-async function addMenu() {
+async function addAndUpdateSubMenu() {
   if (formMenu.id) {
     if (formSubMenu._id) {
       loading.value = true
@@ -163,15 +168,15 @@ async function createMenu() {
 </script>
 
 <template>
-  <div lg:flex gap-2>
-    <div class="lg:w-1/2 bg-gray-50 dark:bg-gray-800  p-4 rounded-md !border !border-gray-200 dark:!border-gray-700">
+  <div lg:flex gap-4 mx-1>
+    <UContainer class="lg:w-1/2 bg-gray-50 dark:bg-muted-800  p-4 rounded-md !border border-gray-300 dark:!border-gray-700">
       <div
         grid
         lg:grid-cols-2
         lg:gap-4
       >
         <UFormGroup name="nameMenu" label="Nombre">
-          <UInput v-model="formMenu.name" icon="i-heroicons-cursor-arrow-rays" color="white" variant="outline" />
+          <UInput v-model="formMenu.name" icon="i-heroicons-cursor-arrow-rays" color="gray" variant="outline" />
         </UFormGroup>
         <UFormGroup name="path" label="Ruta Navegación">
           <USelect v-model="formMenu.path" :options="routes" />
@@ -183,15 +188,11 @@ async function createMenu() {
           <UFormGroup name="status" label="Estado">
             <UCheckbox v-model="formMenu.active" name="status" label="Activado?" />
           </UFormGroup>
-
           <UButton
             v-if="!formMenu.id"
             :loading="loading"
             :disabled="loading"
-            h-7
-            text-muted-700
-            dark:text-muted-800
-            color="primary"
+            color="red"
             variant="solid"
             icon="i-carbon-save-series"
             @click="createMenu()"
@@ -227,12 +228,15 @@ async function createMenu() {
           <UFormGroup name="status" label="Estado">
             <UCheckbox v-model="formSubMenu.active" name="status" label="Activado?" />
           </UFormGroup>
-          <UButton v-if="!formSubMenu._id" h-7 label="Agregar" variant="solid" icon="i-heroicons-arrow-down" @click="addMenu" />
-          <UButton v-else h-7 label="Actualizar" color="yellow" variant="solid" icon="i-heroicons-arrow-path-rounded-square" @click="addMenu" />
+
+          <UButton v-if="!formSubMenu._id" h-7 label="Agregar" variant="solid" icon="i-heroicons-arrow-down" @click="addAndUpdateSubMenu" />
+          <div v-else>
+            <UButton h-7 label="Actualizar" color="yellow" variant="solid" icon="i-heroicons-arrow-path-rounded-square" @click="addAndUpdateSubMenu" />
+          </div>
         </div>
         <div class="col-span-2">
           <UTable
-            class="[&>table>tbody>tr>td,&>table>thead>tr>th]:border [&>table>tbody>tr>td]:border-gray-400"
+
             :ui="{
               td: {
                 padding: 'px-1 py-1',
@@ -243,24 +247,28 @@ async function createMenu() {
               {{ index + 1 }}
             </template>
             <template #name-data="{ row }">
-              <UIcon name="i-carbon-list-checked" />
+              <div class="orderMenu">
+                <UIcon name="i-carbon-list-checked" />
 
-              {{ row.name }}
+                {{ row.name }}
+              </div>
             </template>
             <template #acc-data="{ row }">
               <div class="flex justify-end gap-1">
-                <UButton h-7 color="yellow" variant="solid" icon="i-heroicons-pencil" @click="setEdit(row)" />
+                <UButton h-7 color="yellow" variant="solid" icon="i-heroicons-pencil" @click="setEditSubMenu(row)" />
                 <UButton h-7 color="red" variant="solid" icon="i-heroicons-trash" />
               </div>
             </template>
           </UTable>
         </div>
       </div>
-    </div>
-    <div class="lg:w-1/2 bg-gray-50 dark:bg-gray-800  p-4 rounded-md !border !border-gray-200 dark:!border-gray-700">
+    </UContainer>
+    <UContainer class="lg:w-1/2 bg-gray-50 dark:bg-muted-800   p-4 rounded-md !border border-gray-300 dark:!border-gray-700">
+      <div flex justify-center p-1>
+        <UButton icon="i-carbon-sort-descending" label="Ordenar Menu" @click="modals.ordeningMenu = true" />
+      </div>
       <UTable
         :loading="loadingTable"
-        class="[&>table>tbody>tr>td,&>table>thead>tr>th]:border [&>table>tbody>tr>td]:border-gray-400"
         :ui="{
           td: {
             padding: 'px-1 py-1',
@@ -280,6 +288,7 @@ async function createMenu() {
           </div>
         </template>
       </UTable>
-    </div>
+    </UContainer>
   </div>
+  <modalOrdening v-if="modals.ordeningMenu" v-model="modals.ordeningMenu" :items="menusData.results" />
 </template>

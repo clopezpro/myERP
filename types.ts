@@ -1,7 +1,7 @@
 export type MediaType = 'movie' | 'tv'
 export type ModuleType = 'ventas' | 'compras' | 'inventarios'
 
-export interface ISubMenu {
+/* export interface ISubMenu {
   _id: undefined | string
   name: string
   path: string
@@ -17,6 +17,19 @@ export interface IMenu {
   order: undefined | number
   active: boolean
   subMenus: [ISubMenu] | []
+} */
+export interface IModule {
+  name: string
+  icon: string
+  path?: string
+  selected?: boolean
+  subMenus?: ISubMenu[] | []
+}
+
+export interface ISubMenu {
+  name: string
+  icon: string
+  path: string
 }
 
 export interface Media {

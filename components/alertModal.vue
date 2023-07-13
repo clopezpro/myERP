@@ -21,7 +21,7 @@ function showModal(params: alertType, error = false): void {
   dataModal.stack = params.stack
   dataModal.typeShow = params.typeShow || 'info'
 }
-function showModalError(e: Error | String | unknown, origin?: String | undefined): void {
+function showModalError(e: Error | string | unknown, origin?: string | undefined): void {
   if (e instanceof Error) {
     showModal({
       typeShow: 'error',
@@ -82,7 +82,7 @@ onClickOutside(el, () => {
 
 <template>
   <div v-if="dataModal.show" fixed top-0 left-0 right-0 bottom-0 z-100 bg-black:90 flex>
-    <button absolute top-1 right-1 z-100 p3 text-3xl n-link bg-black:60 rounded-full title="Close" @click="hideModal">
+    <button absolute top-1 right-1 z-1000 p3 text-3xl n-link bg-black:60 rounded-full title="Close" @click="hideModal">
       <div i-carbon-close />
     </button>
     <div ref="el" w-full>

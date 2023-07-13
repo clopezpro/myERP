@@ -1,7 +1,4 @@
 <script setup>
-import '@unocss/reset/tailwind.css'
-
-const colorMode = useColorMode()
 useHead({
   link: [
     {
@@ -25,9 +22,10 @@ useHead({
   color: rgba(0,0,0,0.8);
 }
 .dark body {
-  background-color: rgb(17 24 39/1);
+ background-color: #091a28;
   color: #ebf4f1;
 } */
+
 .sepia-mode body {
   background-color: #f1e7d0;
   color: #433422;

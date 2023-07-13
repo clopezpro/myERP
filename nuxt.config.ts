@@ -1,7 +1,7 @@
 const isDev = process.env.NODE_ENV === 'development'
 
 // const apiBaseUrl = 'http://localhost:3001'
-const apiBaseUrl: String = process.env.PUBLIC_API_BASE || 'http://localhost:3001'
+const apiBaseUrl: string = process.env.PUBLIC_API_BASE || 'http://localhost:3001'
 
 export default defineNuxtConfig({
   modules: [
@@ -24,16 +24,10 @@ export default defineNuxtConfig({
   },
   colorMode: {
     preference: 'system', // default value of $colorMode.preference
-    fallback: 'light', // fallback value if not system preference found
-    hid: 'nuxt-color-mode-script',
-    globalName: '__NUXT_COLOR_MODE__',
-    componentName: 'ColorScheme',
-    classPrefix: '',
-    classSuffix: '-mode',
-    storageKey: 'nuxt-color-mode',
+
   },
   experimental: {
-    inlineSSRStyles: false,
+    inlineSSRStyles: true,
     viewTransition: true,
   },
   routeRules: {

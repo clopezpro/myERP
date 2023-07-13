@@ -1,76 +1,68 @@
 import { defineStore } from 'pinia'
-import type { IMenu } from '@/types'
-import { useAlertErrorModal } from '@/composables/alert'
+import type { IModule } from '@/types'
+import { MODULE_LIST } from '~/constants/lists'
 
-// @unocss-include
 export const useMenuStore = defineStore('useMenuStore', () => {
-  interface IMenuDashboard extends IMenu {
-    selected: boolean
-  }
-
-  const menu = ref<[IMenuDashboard ] | []>([])
-  const menuOpen = ref<Record<string, any> | null>(null)
+  const menu = ref<IModule[] | []>(MODULE_LIST.map((menu) => {
+    menu.selected = false
+    return menu
+  }))
   const showMenu = ref<boolean>(false)
   const minimized = ref<boolean>(false)
   const loading = ref<boolean>(false)
-  const theme = ref<string>('light')
   const $route = useRouter()
-  /* const getMenus = (): [IMenu] | undefined => {
-    return menu.value
-  } */
-  const activeMenu = (id: String) => {
-    const index = menu.value.findIndex((item: IMenuDashboard) => item.id === id)
-    if (index !== -1)
-      menu.value[index].selected = true
+  const selectMenu = (name: string) => {
+    for (const [key, value] of menu.value.entries()) {
+      menu.value[key].selected = false
+      if (value.name === name) {
+        if (value.subMenus?.length === 0) {
+          showMenu.value = false /* is a module only not display submenus */
+          continue
+        }
+        else {
+          showMenu.value = true
+        }
+        menu.value[key].selected = true
+      }
+    }
   }
   const minimizeBar = () => {
     minimized.value = !minimized.value
     if (minimized.value)
       showMenu.value = false
   }
+  const setDefaultMenu = () => {
+    for (const [key, value] of menu.value.entries()) {
+      menu.value[key].selected = false
+      if (value.subMenus) {
+        const subMenu = value.subMenus?.find(subMenu => subMenu.path === $route.currentRoute.value.path)
+        if (subMenu)
+          menu.value[key].selected = true
+      }
+      else {
+        if (menu.value[key].path === $route.currentRoute.value.path)
+          menu.value[key].selected = true
+      }
+      // set default selected menu by path in route currentPath
+    }
+  }
+  setDefaultMenu()
   const openAndCloseMenu = () => {
     showMenu.value = !showMenu.value
     if (showMenu.value && minimized.value)
       minimized.value = false
   }
-  onBeforeMount(async () => {
-    await fetchMenus()
-  })
-  async function fetchMenus(reload = false) {
-    if (!reload && menu.value)
-      return
-
-    const showModalError = useAlertErrorModal()
-    try {
-      loading.value = true
-      const result = await fetchMAHIRFULL({
-        baseURL: '/config/menu/getMenus',
-        method: 'GET',
-      })
-      loading.value = false
-      menu.value = result.results.map((item: IMenu) => {
-        return {
-          ...item,
-          selected: false,
-        }
-      })
-    }
-    catch (e) {
-      loading.value = false
-      showModalError(e, 'Cerrar Session')
-    }
+  const getMenuActive = () => {
+    return menu.value.find(menu => menu.selected)
   }
   return {
-    menuOpen,
+    loading,
     minimized,
     showMenu,
+    getMenuActive,
     getMenus: menu,
     minimizeBar,
-    activeMenu,
+    selectMenu,
     openAndCloseMenu,
-    fetchMenus,
   }
-}, {
-  persist: true,
-
 })

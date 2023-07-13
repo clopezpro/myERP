@@ -1,11 +1,11 @@
 <script setup lang="ts">
 const myButtons = [
   {
-    icon: 'i-uil-notebooks',
+    icon: 'i-carbon-settings-adjust',
     label: 'Notebooks',
   },
   {
-    icon: 'i-uil-bookmarks',
+    icon: 'i-carbon-settings-check',
     label: 'Bookmarks',
   },
 ]
